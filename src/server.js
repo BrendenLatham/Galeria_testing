@@ -7,7 +7,6 @@ const app = express();
 const port = 5000;
 
 const mongoURI = 'mongodb+srv://Galeria:Uu0dxoceIGwf3qA1@galeria.hdzdkkc.mongodb.net/?retryWrites=true&w=majority';
-const dbName = 'users';
 
 app.use(express.json());
 app.use(cors());
@@ -24,7 +23,7 @@ app.post('/login', async (req, res) => {
     const client = new MongoClient(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
     await client.connect();
 
-    const db = client.db(dbName);
+    const db = client.db('users');
     const collection = db.collection('login_credentials'); // Change 'users' to your collection name
 
     const user = await collection.findOne({ username });
@@ -57,27 +56,35 @@ app.listen(port, () => {
 });
 
 app.post('/signup', async (req, res) => {
-  const { username, password } = req.body;
+  console.log('Received user data:', req.body);
+  // Extract email along with username and password from the request body
+  const { username, email, password } = req.body; // email is now included
 
   try {
     const client = new MongoClient(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
     await client.connect();
 
-    const db = client.db(dbName);
-    const collection = db.collection('login_credentials'); // Change 'users' to your collection name
+    const db = client.db('users');
+    const collection = db.collection('login_credentials');
 
-    // Check if the username already exists
-    const existingUser = await collection.findOne({ username });
-    
+    // Check if the username or email already exists
+    const existingUser = await collection.findOne({ $or: [{ username }, { email }] });
+
     if (existingUser) {
-      // Username already taken, registration failed
-      res.status(409).json({ message: 'Username already exists' });
+      // Username or email already taken, registration failed
+      res.status(409).json({ message: 'Username or email already exists' });
     } else {
       // Hash the password before storing it
       const hashedPassword = await bcrypt.hash(password, 10);
-      
-      // Insert the new user data into the database
-      await collection.insertOne({ username, password: hashedPassword });
+
+      // Insert the new user data including email into the database
+      await collection.insertOne({ username, email, password: hashedPassword }, (err, result) => {
+        if (err) {
+          console.error('Error inserting document:', err);
+        } else {
+          console.log('Inserted document:', result.ops[0]);
+        }
+      });
 
       // Registration successful
       res.status(201).json({ message: 'Registration successful' });
