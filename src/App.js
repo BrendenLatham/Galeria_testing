@@ -10,6 +10,7 @@ import { AuthProvider} from './AuthContext';
 import AdminPanel from './panel';
 import Content6 from './content6';
 import SearchResult from './SearchResult';
+import ProductPage from './ProductPage';
 import Info from './info';
 import Layout from './Layout';
 
@@ -26,6 +27,7 @@ function App() {
           <Route path="/panel" element={<AdminPanel />} />
           <Route path="/search-result" element={<Layout><SearchResult /></Layout>} />
           <Route path="/info" element={<Layout><Info /></Layout>} />
+          <Route path="/product/:objectId" element={<Layout><ProductPage /></Layout>} />
        </Routes>
      </Router>
     </AuthProvider>

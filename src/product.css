@@ -1,0 +1,14 @@
+.product-page {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; 
+  }
+  
+  .product-image {
+    position: relative;
+    width: 50%;
+    height: 50%;
+    z-index:1;
+  }

@@ -1,7 +1,9 @@
 // productContainer3.js
 import React from "react";
+import { useNavigate } from 'react-router-dom';
 
 const ProductContainer3 = (postToRender) => {
+  const navigate = useNavigate();
   console.log(postToRender);
   return (
     <div className="container-fluid" style={{ backgroundColor: "white" }}>
@@ -21,7 +23,7 @@ const ProductContainer3 = (postToRender) => {
                 <h5 className="card-title">{product.artistDisplayName}</h5>
                 <p className="card-text">{product.title}</p>
                 <button
-                  href="./#"
+                  onClick={() => navigate(`/product/${product.objectID}`)}
                   className="btn btn-dark"
                   style={{ maxWidth: 100 }}
                 >
